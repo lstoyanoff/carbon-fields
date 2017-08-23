@@ -93,7 +93,8 @@ export const ComplexField = ({
 	handleSort
 }) => {
 	const availableGroups = filter(field.group_types, groupType => includes(enabledGroupTypes, groupType.name));
-	const complexTabActions = isEmpty(availableGroups) ? null : (
+	const shouldNotDisplayActions = isEmpty(availableGroups) || (field.max > -1 && field.value.length >= field.max); 
+	const complexTabActions = shouldNotDisplayActions ? null : (
 		<ComplexActions
 			buttonText="+"
 			onButtonClick={handleAddGroupClick}>
@@ -105,7 +106,7 @@ export const ComplexField = ({
 					outsideClickIgnoreClass="carbon-button" />
 		</ComplexActions>
 	);
-	const complexButtonActions = isEmpty(availableGroups) ? null : (
+	const complexButtonActions = shouldNotDisplayActions ? null : (
 		<ComplexActions
 			buttonText={carbonFieldsL10n.field.complexAddButton.replace('%s', field.labels.singular_name)}
 			onButtonClick={handleAddGroupClick}>
