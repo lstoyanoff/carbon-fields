@@ -303,9 +303,6 @@ class Router {
 		$options      = isset( $_GET['options'] ) ? explode( ';', $_GET['options'] ) : array();
 		$return_value = array();
 
-		/** @var \Carbon_Fields\Field\Association_Field $field */
-		$field = Helper::get_field( null, $container_id, $field_id );
-
 		$options = array_map( function ( $option ) {
 			$option = explode( ':', $option );
 
@@ -320,10 +317,10 @@ class Router {
 			$item = array(
 				'type'       => $option['type'],
 				'subtype'    => $option['subtype'],
-				'thumbnail'  => $field->get_thumbnail_by_type( $option['id'], $option['type'], $option['subtype'] ),
+				'thumbnail'  => Helper::get_association_item_thumbnail_by_type( $option['id'], $option['type'], $option['subtype'], $field_id ),
 				'id'         => intval( $option['id'] ),
-				'title'      => $field->get_title_by_type( $option['id'], $option['type'], $option['subtype'] ),
-				'label'      => $field->get_item_label( $option['id'], $option['type'], $option['subtype'] ),
+				'title'      => Helper::get_association_item_title_by_type( $option['id'], $option['type'], $option['subtype'], $field_id ),
+				'label'      => Helper::get_association_item_label( $option['id'], $option['type'], $option['subtype'], $field_id ),
 				'is_trashed' => ( $option['type'] == 'post' && get_post_status( $option['id'] ) === 'trash' ),
 			);
 

@@ -705,4 +705,93 @@ class Helper {
 
 		return $sidebars;
 	}
+
+	public static function get_association_item_thumbnail_by_type( $id, $type, $subtype = '', $field_name ) {
+		$thumbnail_url = '';
+
+		if ( $type === 'post' ) {
+			$thumbnail_url = get_the_post_thumbnail_url( $id, 'thumbnail' );
+		}
+
+		return apply_filters( 'carbon_fields_association_field_option_thumbnail', $thumbnail_url, $field_name, $id, $type, $subtype );
+	}
+
+	/**
+	 * Used to get the title of an association field item.
+	 *
+	 * Can be overriden or extended by the `carbon_association_title` filter.
+	 *
+	 * @param int $id The database ID of the item.
+	 * @param string $type Item type (post, term, user, comment, or a custom one).
+	 * @param string $subtype The subtype - "page", "post", "category", etc.
+	 * @return string $title The title of the item.
+	 */
+	public static function get_association_item_title_by_type( $id, $type, $subtype = '', $field_name = '' ) {
+		$title = '';
+
+		$wp_toolset = \Carbon_Fields\Carbon_Fields::resolve( 'wp_toolset' );
+
+		$method = 'get_' . $type . '_title';
+		$callable = array( $wp_toolset, $method );
+		if ( is_callable( $callable ) ) {
+			$title = call_user_func( $callable, $id, $subtype );
+		}
+
+		if ( $type === 'comment' ) {
+			$max = apply_filters( 'carbon_fields_association_field_comment_length', 30, $field_name );
+			if ( strlen( $title ) > $max ) {
+				$title = substr( $title, 0, $max ) . '...';
+			}
+		}
+
+		/**
+		 * Filter the title of the association item.
+		 *
+		 * @param string $title   The unfiltered item title.
+		 * @param string $name    Name of the association field.
+		 * @param int    $id      The database ID of the item.
+		 * @param string $type    Item type (post, term, user, comment, or a custom one).
+		 * @param string $subtype Subtype - "page", "post", "category", etc.
+		 */
+		$title = apply_filters( 'carbon_fields_association_field_title', $title, $field_name, $id, $type, $subtype );
+
+		if ( ! $title ) {
+			$title = '(no title) - ID: ' . $id;
+		}
+
+		return $title;
+	}
+
+	/**
+	 * Used to get the label of an association field item.
+	 *
+	 * Can be overriden or extended by the `carbon_association_item_label` filter.
+	 *
+	 * @param int     $id      The database ID of the item.
+	 * @param string  $type    Item type (post, term, user, comment, or a custom one).
+	 * @param string  $subtype Subtype - "page", "post", "category", etc.
+	 * @return string $label The label of the item.
+	 */
+	public static function get_association_item_label( $id, $type, $subtype = '', $field_name ) {
+		$label = $subtype ? $subtype : $type;
+
+		if ( $type === 'post' ) {
+			$post_type_object = get_post_type_object( $subtype );
+			$label = $post_type_object->labels->singular_name;
+		} elseif ( $type === 'term' ) {
+			$taxonomy_object = get_taxonomy( $subtype );
+			$label = $taxonomy_object->labels->singular_name;
+		}
+
+		/**
+		 * Filter the label of the association item.
+		 *
+		 * @param string $label   The unfiltered item label.
+		 * @param string $name    Name of the association field.
+		 * @param int    $id      The database ID of the item.
+		 * @param string $type    Item type (post, term, user, comment, or a custom one).
+		 * @param string $subtype Subtype - "page", "post", "category", etc.
+		 */
+		return apply_filters( 'carbon_fields_association_field_item_label', $label, $field_name, $id, $type, $subtype );
+	}
 }
