@@ -52,7 +52,7 @@ addFilter( 'carbon-fields.association.metabox', 'carbon-fields/metaboxes', withP
 				const widgetIndex = path.shift();
 				const widgetField = path.shift();
 
-				rootFieldName += `[ ${ widgetIndex } ][ ${ widgetField } ]`;
+				rootFieldName += `[${ widgetIndex }][${ widgetField }]`;
 			}
 
 			const rootField = findFieldByName( fields, rootFieldName );
