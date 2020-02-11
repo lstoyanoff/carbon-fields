@@ -44,7 +44,17 @@ addFilter( 'carbon-fields.association.metabox', 'carbon-fields/metaboxes', withP
 			path = path.filter( ( chunk ) => chunk !== '' );
 
 			// Get the root field.
-			const rootFieldName = path.shift();
+			let rootFieldName = path.shift();
+
+			// All fields in widgets share this hierarchy: "widget-{widget_name}[{widget_index}][{field_name}]"
+			// so we need additional logic for the rootFieldName.
+			if ( props.name.startsWith( 'widget-' ) ) {
+				const widgetIndex = path.shift();
+				const widgetField = path.shift();
+
+				rootFieldName += `[ ${ widgetIndex } ][ ${ widgetField } ]`;
+			}
+
 			const rootField = findFieldByName( fields, rootFieldName );
 
 			// Get the hierarchy.
