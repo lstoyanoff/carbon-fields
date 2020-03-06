@@ -6,6 +6,25 @@ namespace Carbon_Fields\Field;
  * WYSIWYG rich text area field class.
  */
 class Rich_Text_Field extends Textarea_Field {
+	/**
+	 * TinyMCE settings
+	 *
+	 * @link https://www.tiny.cloud/docs-4x/configure/editor-appearance/
+	 * @var array
+	 */
+	protected $editor_settings = array();
+
+	/**
+	* Set the editor settings
+	*
+	* @param  array $settings
+	* @return self  $this
+	*/
+	public function set_editor_settings( $settings ) {
+		$this->editor_settings = array_merge( $this->editor_settings, $settings );
+
+		return $this;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -73,6 +92,7 @@ class Rich_Text_Field extends Textarea_Field {
 		$field_data = array_merge( $field_data, array(
 			'rich_editing' => user_can_richedit(),
 			'media_buttons' => $media_buttons,
+			'editor_settings' => $this->editor_settings,
 		) );
 
 		return $field_data;

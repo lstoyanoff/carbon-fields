@@ -154,23 +154,28 @@ class RichTextField extends Component {
 			};
 
 			const editorOptions = {
-				...window.tinyMCEPreInit.mceInit.carbon_settings,
-				selector: `#${ id }`,
-				setup: editorSetup
+				...{
+					...window.tinyMCEPreInit.mceInit.carbon_settings,
+					selector: `#${ id }`,
+					setup: editorSetup
+				},
+				...field.editor_settings
 			};
 
 			window.tinymce.init( editorOptions );
 		}
 
-		const quickTagsOptions = {
-			...window.tinyMCEPreInit,
-			id
-		};
+		if ( field.editor_settings.quicktags !== false ) {
+			const quickTagsOptions = {
+				...window.tinyMCEPreInit,
+				id
+			};
 
-		window.quicktags( quickTagsOptions );
+			window.quicktags( quickTagsOptions );
 
-		// Force the initialization of the quick tags.
-		window.QTags._buttonsInit();
+			// Force the initialization of the quick tags.
+			window.QTags._buttonsInit();
+		}
 	}
 
 	/**
